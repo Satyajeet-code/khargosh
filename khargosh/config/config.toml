@@ -1,0 +1,88 @@
+[agent]
+max_steps = 50
+
+[models.primary]
+model = "groq/openai/gpt-oss-120b"
+max_tokens = 4000
+reasoning_effort = "medium"
+
+[models.secondary]
+model = "anthropic/claude-haiku-5-5"
+max_tokens = 8000
+
+[tools.bash]
+timeout_seconds = 120
+max_output_chars = 20000
+
+[observability]
+enabled = true
+
+
+
+# ==============================================================================
+# NOTES 
+# ==============================================================================
+#
+# API keys do NOT go in this file. Put them in .env (copy .env.example).
+#
+# [agent]
+#   max_steps          The inner loop stops after this many model calls in one turn (D9).
+#
+# [models.primary]     The model that talks to you.
+# [models.secondary]   The model for subagents (D12). Not used until we build subagents.
+#   model              A LiteLLM model string: "<provider>/<model>", for example:
+#                        "anthropic/claude-opus-5-5"
+#                        "gemini/<model-id>"
+#                        "openai/<model-id>"
+#                        "groq/<model-id>"
+#                        "openrouter/<vendor>/<model-id>"
+#                        "ollama_chat/<model-name>"   (local)
+#   max_tokens         The maximum length of one model reply, in tokens.
+#   reasoning_effort   How hard the model thinks: none | minimal | low | medium | high | xhigh | max
+#                      Claude Opus 5.5 cannot turn thinking off; lower effort saves cost.
+#                      Gemini accepts low | medium | high.
+#   api_base           (optional) The server address, for Ollama, vLLM, or a proxy.
+#   extra              (optional) Extra parameters, passed unchanged to LiteLLM.
+#
+# [tools.bash]
+#   timeout_seconds    A command that runs longer than this is stopped.
+#   max_output_chars   Longer output is cut in the middle, so the model sees the start and the end.
+#
+# [observability]
+#   enabled            Send traces to Langfuse. Tracing is off automatically
+#                      when the Langfuse keys are missing.
+#
+# To use another config file without editing this one:
+#   KHARGOSH_CONFIG=config.gemini.toml python -m khargosh
+# A plain file name is looked up in this folder (khargosh/config/).
+#
+# ------------------------------------------------------------------------------
+# EXAMPLES: to use one, replace the [models.primary] block at the top.
+# A TOML file cannot have two [models.primary] blocks.
+# ------------------------------------------------------------------------------
+#
+# Gemini free tier (key from Google AI Studio, project with NO billing account).
+# Free-tier prompts and responses may be used by Google and read by human reviewers.
+#
+#   [models.primary]
+#   model = "gemini/gemini-3.8-flash"
+#   max_tokens = 8000
+#   reasoning_effort = "medium"
+#
+# Groq free plan. The token limit per minute is small, so keep requests small,
+# and also set max_output_chars = 4000 under [tools.bash].
+# If Groq rejects reasoning_effort, delete that line.
+#
+#   [models.primary]
+#   model = "groq/openai/gpt-oss-120b"
+#   max_tokens = 4000
+#   reasoning_effort = "medium"
+#
+# Local Ollama model. Ollama's default context window is too small for an agent,
+# so set num_ctx.
+#
+#   [models.primary]
+#   model = "ollama_chat/<model-name>"
+#   api_base = "http://localhost:11434"
+#   max_tokens = 8000
+#   extra = { num_ctx = 32768 }
