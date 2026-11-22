@@ -1,0 +1,17 @@
+# Secrets
+.env
+# Practice notebook: it contains an API key
+try.ipynb
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+
+.claude/
+
+decisions_rejected.md
+
+decisions_taken.md
